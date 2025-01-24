@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Predictions</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+        }
+        .predictions-container {
+            margin-top: 20px;
+        }
+        .prediction {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Predictions</h1>
+    <div id="predictions-container" class="predictions-container"></div>
+
+    <script>
+        // Connect to the WebSocket server
+        const socket = io();
+
+        // Reference to the predictions container
+        const predictionsContainer = document.getElementById("predictions-container");
+
+        // Listen for incoming predictions from the server
+        socket.on("predictions", function (data) {
+            console.log("Received prediction:", data);
+
+            // Create a new div for the prediction
+            const predictionDiv = document.createElement("div");
+            predictionDiv.className = "prediction";
+            predictionDiv.textContent = `ID: ${data.id}, Prediction: ${data.prediction}`;
+
+            // Append the prediction to the container
+            predictionsContainer.appendChild(predictionDiv);
+
+            // Scroll to the latest prediction
+            predictionDiv.scrollIntoView({ behavior: "smooth" });
+        });
+
+        // Handle connection events
+        socket.on("connect", function () {
+            console.log("Connected to WebSocket server");
+        });
+
+        socket.on("disconnect", function () {
+            console.log("Disconnected from WebSocket server");
+        });
+    </script>
+</body>
+</html>
